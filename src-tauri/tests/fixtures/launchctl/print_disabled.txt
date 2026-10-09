@@ -1,0 +1,7 @@
+
+	disabled services = {
+		"com.docker.helper" => enabled
+		"org.pqrs.service.agent.Karabiner-Console-User-Server" => enabled
+		"com.apple.ManagedClientAgent.enrollagent" => disabled
+		"com.apple.Siri.agent" => disabled
+	}

@@ -1,0 +1,19 @@
+gui/501/com.example.running = {
+	active count = 1
+	path = /Users/u/Library/LaunchAgents/com.example.running.plist
+	type = LaunchAgent
+	state = running
+
+	program = /bin/sleep
+	domain = gui/501 [100002]
+	runs = 1
+	pid = 83124
+	immediate reason = ipc (socket)
+	forks = 0
+	execs = 1
+	last exit code = (never exited)
+
+	resource coalition = {
+		state = active
+	}
+}

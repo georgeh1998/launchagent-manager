@@ -1,0 +1,356 @@
+/* DADS（デジタル庁デザインシステム）のトークンを参照したアプリ用の変数 */
+:root {
+  --app-primary: var(--color-primitive-blue-900, #0017c1);
+  --app-primary-hover: var(--color-primitive-blue-1000, #00118f);
+  --app-selected-bg: var(--color-primitive-blue-50, #e8f1fe);
+  --app-border: var(--color-neutral-solid-gray-200, #cccccc);
+  --app-border-strong: var(--color-neutral-solid-gray-536, #767676);
+  --app-muted: var(--color-neutral-solid-gray-536, #767676);
+  --app-text: var(--color-neutral-solid-gray-900, #1a1a1a);
+  --app-bg: #ffffff;
+  --app-bg-sub: var(--color-neutral-solid-gray-50, #f2f2f2);
+  --app-success: var(--color-primitive-green-800, #197a4b);
+  --app-error: var(--color-primitive-red-900, #ce0000);
+  --app-warning: #c74700;
+  --app-focus: #ffd43d;
+
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+
+  color-scheme: light;
+  font-family: var(--font-family-sans, "Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-serif);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--app-text);
+  background: var(--app-bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--app-bg);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.4;
+}
+
+:focus-visible {
+  outline: 4px solid var(--app-focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--app-text);
+}
+
+/* ---- レイアウト ---- */
+.layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: 100vh;
+}
+
+.list-pane {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--app-border);
+  background: var(--app-bg-sub);
+  min-height: 0;
+}
+
+.list-pane__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-4);
+  border-bottom: 1px solid var(--app-border);
+}
+
+.list-pane__actions {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.job-list {
+  list-style: none;
+  margin: 0;
+  padding: var(--sp-2);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.job-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  width: 100%;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--app-text);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.job-row:hover {
+  background: var(--app-bg);
+}
+
+.job-row[aria-pressed="true"] {
+  background: var(--app-selected-bg);
+  border-color: var(--app-primary);
+}
+
+.job-row__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.job-row__meta {
+  display: flex;
+  gap: var(--sp-1);
+  flex-shrink: 0;
+}
+
+.detail-pane {
+  overflow-y: auto;
+  padding: var(--sp-5) var(--sp-6);
+  min-width: 0;
+}
+
+.detail-pane__title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+  font-size: 24px;
+  word-break: break-all;
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-5);
+}
+
+.detail-list {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: var(--sp-3) var(--sp-4);
+  margin: 0;
+}
+
+.detail-list dt {
+  font-weight: 700;
+  color: var(--app-muted);
+  font-size: 14px;
+}
+
+.detail-list dd {
+  margin: 0;
+  word-break: break-all;
+}
+
+.mono {
+  font-family: var(--font-family-mono, "Noto Sans Mono", ui-monospace, monospace);
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+
+.muted {
+  color: var(--app-muted);
+}
+
+.empty {
+  color: var(--app-muted);
+  padding: var(--sp-6);
+}
+
+/* ---- ボタン ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: var(--sp-1) var(--sp-4);
+  border: 1px solid var(--app-primary);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--app-primary);
+  color: #ffffff;
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--app-primary-hover);
+}
+
+.btn--secondary {
+  background: var(--app-bg);
+  color: var(--app-primary);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background: var(--app-selected-bg);
+}
+
+.btn--danger {
+  background: var(--app-bg);
+  border-color: var(--app-error);
+  color: var(--app-error);
+}
+
+/* ---- フォーム部品 ---- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-4);
+}
+
+.field__label {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.field__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.input,
+.select {
+  min-height: 40px;
+  padding: var(--sp-1) var(--sp-3);
+  border: 1px solid var(--app-border-strong);
+  border-radius: 8px;
+  background: var(--app-bg);
+  color: var(--app-text);
+  font: inherit;
+}
+
+.input--narrow {
+  width: 80px;
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--app-error);
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: 14px;
+}
+
+.checkbox input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--app-primary);
+}
+
+.field-error {
+  color: var(--app-error);
+  font-size: 14px;
+}
+
+.field-warning {
+  color: var(--app-warning);
+  font-size: 14px;
+}
+
+/* ---- ステータスラベル ---- */
+.status-label {
+  display: inline-block;
+  padding: 0 var(--sp-2);
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.status-label--enabled {
+  color: var(--app-success);
+}
+
+.status-label--disabled {
+  color: var(--app-muted);
+}
+
+.status-label--unknown,
+.status-label--warning {
+  color: var(--app-warning);
+}
+
+.status-label--error {
+  color: var(--app-error);
+}
+
+/* ---- ダイアログ・バナー ---- */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.dialog {
+  width: min(480px, calc(100vw - 32px));
+  padding: var(--sp-5);
+  border-radius: 12px;
+  background: var(--app-bg);
+  box-shadow: var(--elevation-8, 0 8px 24px rgba(0, 0, 0, 0.2));
+}
+
+.dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+  margin-top: var(--sp-5);
+}
+
+.error-banner {
+  margin-bottom: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  border: 1px solid var(--app-error);
+  border-left-width: 6px;
+  border-radius: 8px;
+  background: #fdeeee;
+  color: var(--app-error);
+  word-break: break-all;
+}
+
+.error-banner__close {
+  margin-left: var(--sp-3);
+}

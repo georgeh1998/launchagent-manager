@@ -1,0 +1,41 @@
+gui/501/com.openai.atlas.update-helper = {
+	active count = 0
+	path = /Users/george/Library/LaunchAgents/com.openai.atlas.update-helper.plist
+	type = LaunchAgent
+	state = not running
+
+	program = /Applications/ChatGPT Atlas.app/Contents/Library/AtlasUpdateHelper
+	arguments = {
+		/Applications/ChatGPT Atlas.app/Contents/Library/AtlasUpdateHelper
+	}
+
+	stdout path = /Users/george/Library/Logs/AtlasUpdateHelper.log
+	stderr path = /Users/george/Library/Logs/AtlasUpdateHelper.log
+	default environment = {
+		PATH => /usr/bin:/bin:/usr/sbin:/sbin
+	}
+
+	domain = gui/501 [100002]
+	asid = 100002
+	minimum runtime = 10
+	exit timeout = 5
+	runs = 684
+	last exit code = 0
+
+	resource coalition = {
+		ID = 1234
+		type = resource
+		state = active
+	}
+
+	jetsam coalition = {
+		ID = 1235
+		type = jetsam
+		state = active
+	}
+	spawn type = daemon (3)
+	run interval = 3600 seconds
+	job state = exited
+
+	properties = runatload | inferred program | managed LWCR | has LWCR
+}
