@@ -18,6 +18,68 @@ npm install
 npx tauri dev
 ```
 
+`npx tauri dev` は開発用の起動方法です。開発サーバーが動いている間だけ使えます。普段使いのアプリとして使う場合は、次の「Mac アプリとしてビルド・インストール」の手順で `.app` を作ります。
+
+## Mac アプリとしてビルド・インストール
+
+### ビルド
+
+```bash
+npm run tauri build
+```
+
+次のファイルが作られます。
+
+| ファイル | 場所 |
+|---|---|
+| アプリ本体 | `src-tauri/target/release/bundle/macos/LaunchAgent Manager.app` |
+| インストーラ | `src-tauri/target/release/bundle/dmg/LaunchAgent Manager_<バージョン>_aarch64.dmg` |
+
+### インストール
+
+`LaunchAgent Manager.app` を Finder で `/Applications` にドラッグします。コマンドで行う場合は次のとおりです。
+
+```bash
+cp -R "src-tauri/target/release/bundle/macos/LaunchAgent Manager.app" /Applications/
+```
+
+インストール後は Launchpad や Spotlight から起動できます。開発サーバーは必要ありません。
+
+### コード変更後に反映する
+
+ビルドしただけでは `/Applications` のアプリは更新されません。次の手順で入れ替えます。
+
+1. 起動中のアプリを終了する（⌘Q）
+2. `npm run tauri build` でビルドし直す
+3. 古いアプリを削除して、新しいアプリをコピーする
+
+```bash
+rm -rf "/Applications/LaunchAgent Manager.app"
+cp -R "src-tauri/target/release/bundle/macos/LaunchAgent Manager.app" /Applications/
+```
+
+古いアプリを消さずに `cp -R` すると、古いファイルが残ることがあります。必ず削除してからコピーしてください。
+
+### アイコンの変更
+
+1024×1024 の PNG（背景透過）を用意して、次のコマンドで各サイズのアイコンを生成します。生成後にビルドし直してください。
+
+```bash
+npx tauri icon path/to/icon.png
+```
+
+`src-tauri/icons/` に `icon.icns` などが出力されます。Android・iOS 用のファイルも生成されますが、このアプリでは使いません。
+
+### うまく動かないとき
+
+- **「開発元を確認できない」と表示されて開けない**: コード署名をしていないためです。Finder でアプリを右クリックして「開く」を選ぶか、次のコマンドを実行します。
+
+  ```bash
+  xattr -cr "/Applications/LaunchAgent Manager.app"
+  ```
+
+- **アイコンが古いまま表示される**: Dock のアイコンキャッシュが残っています。`killall Dock` を実行してください。
+
 ## テスト
 
 ```bash
