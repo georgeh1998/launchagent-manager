@@ -19,6 +19,16 @@ use super::validate::{label_format_error, validate_input, JobInput, MSG_LABEL_DU
 use super::wrapper::ensure_wrapper;
 
 const MSG_NO_LABEL: &str = "Label がありません";
+const MSG_EMPTY_PLIST: &str = "中身が空の plist です（Label がないため launchd は読み込みません）";
+
+/// Label がないジョブの読み込みエラー文言。空の plist は別の文言にする。
+fn missing_label_error(job: &JobPlist) -> Option<String> {
+    match (&job.label, job.dict.is_empty()) {
+        (Some(_), _) => None,
+        (None, true) => Some(MSG_EMPTY_PLIST.into()),
+        (None, false) => Some(MSG_NO_LABEL.into()),
+    }
+}
 
 struct ScannedJob {
     file_name: String,
@@ -214,7 +224,7 @@ impl JobService {
                         };
                         JobSummary {
                             display_name: job.label.clone().unwrap_or_else(|| s.file_name.clone()),
-                            parse_error: if job.label.is_none() { Some(MSG_NO_LABEL.into()) } else { None },
+                            parse_error: missing_label_error(&job),
                             file_name: s.file_name,
                             path,
                             label: job.label,
@@ -312,7 +322,7 @@ impl JobService {
             path: path_str,
             label: job.label.clone(),
             managed,
-            parse_error: if job.label.is_none() { Some(MSG_NO_LABEL.into()) } else { None },
+            parse_error: missing_label_error(&job),
             state,
             schedule_lines: describe(&job.schedule),
             command: if managed { Some(managed_command(&job)) } else { display_command(&job) },
@@ -506,10 +516,9 @@ impl JobService {
         Ok(())
     }
 
-    /// 有効化 = enable →（未登録なら）bootstrap、無効化 = bootout → disable。管理外のジョブも可。
+    /// 有効化 = enable →（未登録なら）bootstrap、無効化 = bootout → disable。管理ジョブのみ。
     pub fn set_enabled(&self, file_name: &str, enabled: bool) -> Result<(), AppError> {
-        let path = self.resolve_file(file_name)?;
-        let label = self.load_job(&path)?.label.ok_or_else(|| plist_err(MSG_NO_LABEL))?;
+        let (path, _, _, label) = self.load_managed(file_name)?;
         let lc = self.lc();
         if enabled {
             lc.enable(&label)?;
@@ -526,9 +535,9 @@ impl JobService {
         }
     }
 
+    /// 今すぐ実行は管理ジョブのみ。
     pub fn run_now(&self, file_name: &str) -> Result<(), AppError> {
-        let path = self.resolve_file(file_name)?;
-        let label = self.load_job(&path)?.label.ok_or_else(|| plist_err(MSG_NO_LABEL))?;
+        let (_, _, _, label) = self.load_managed(file_name)?;
         self.lc().kickstart(&label)
     }
 }

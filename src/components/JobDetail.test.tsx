@@ -36,8 +36,15 @@ describe("JobDetail", () => {
     expect(screen.getByText("実行回数: 684")).toBeInTheDocument();
     expect(screen.getByText("最終終了コード: 0")).toBeInTheDocument();
     expect(screen.getByText("標準エラーログ更新日時: 不明")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "有効にする" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "今すぐ実行" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "有効にする" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "今すぐ実行" })).toBeDisabled();
+  });
+
+  it("does not allow disabling an enabled unmanaged job", () => {
+    const d = unmanagedDetail();
+    renderDetail({ ...d, state: { ...d.state, status: "enabled", disabled: false, loaded: true } });
+    expect(screen.getByRole("button", { name: "無効にする" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "今すぐ実行" })).toBeDisabled();
   });
 
   it("shows print and parse errors", () => {

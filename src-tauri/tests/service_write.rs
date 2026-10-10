@@ -397,15 +397,13 @@ fn enable_loaded_args() {
 }
 
 #[test]
-fn toggle_and_run_allowed_for_non_managed() {
+fn toggle_and_run_rejected_for_non_managed() {
     let c = cfg();
     let e = env_with(|fs| fs.with_file(agent(&c, "com.other.plist"), plist_xml("<key>Label</key><string>com.other</string><key>Program</key><string>/bin/x</string>")));
-    e.svc.set_enabled("com.other.plist", false).unwrap();
-    e.svc.run_now("com.other.plist").unwrap();
-    assert_eq!(
-        e.journal.mutating_ops(),
-        vec![la(&["bootout", "gui/501/com.other"]), la(&["disable", "gui/501/com.other"]), la(&["kickstart", "gui/501/com.other"])]
-    );
+    assert!(matches!(e.svc.set_enabled("com.other.plist", false), Err(AppError::NotManaged { .. })));
+    assert!(matches!(e.svc.set_enabled("com.other.plist", true), Err(AppError::NotManaged { .. })));
+    assert!(matches!(e.svc.run_now("com.other.plist"), Err(AppError::NotManaged { .. })));
+    assert!(e.journal.mutating_ops().is_empty());
 }
 
 #[test]

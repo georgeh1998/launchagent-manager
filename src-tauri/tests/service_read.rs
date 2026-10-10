@@ -23,6 +23,7 @@ fn mixed_env() -> Env {
             .with_file(agent(&c, "com.example.bin.plist"), binary_plist("com.example.bin"))
             .with_file(agent(&c, "broken.plist"), "<?xml version=\"1.0\"?><plist><dict><key>")
             .with_file(agent(&c, "nolabel.plist"), plist_xml("<key>Program</key><string>/bin/true</string>"))
+            .with_file(agent(&c, "empty.plist"), plist_xml(""))
             .with_file(agent(&c, ".DS_Store"), [0u8, 0, 0, 1, 66, 117, 100, 49])
             .with_file(agent(&c, "foo.txt"), "hello")
             .with_dir(agent(&c, "sub.plist"))
@@ -40,14 +41,16 @@ fn list_survives_mixed_directory() {
     let names: Vec<&str> = rows.iter().map(|r| r.display_name.as_str()).collect();
     assert_eq!(
         names,
-        vec!["broken.plist", "com.example.bin", "com.georgeh.managed", "com.openai.atlas.update-helper", "nolabel.plist"]
+        vec!["broken.plist", "com.example.bin", "com.georgeh.managed", "com.openai.atlas.update-helper", "empty.plist", "nolabel.plist"]
     );
     let broken = rows.iter().find(|r| r.file_name == "broken.plist").unwrap();
     assert!(broken.parse_error.is_some());
     assert_eq!(broken.status, JobStatus::Unknown);
     let nolabel = rows.iter().find(|r| r.file_name == "nolabel.plist").unwrap();
     assert_eq!(nolabel.label, None);
-    assert!(nolabel.parse_error.is_some());
+    assert_eq!(nolabel.parse_error.as_deref(), Some("Label がありません"));
+    let empty = rows.iter().find(|r| r.file_name == "empty.plist").unwrap();
+    assert!(empty.parse_error.as_deref().unwrap().contains("中身が空の plist"));
 }
 
 #[test]

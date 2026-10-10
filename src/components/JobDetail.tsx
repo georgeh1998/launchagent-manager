@@ -52,6 +52,9 @@ export function JobDetail({ detail, busy, onToggleEnabled, onRunNow, onEdit, onD
   const { state } = detail;
   const enabled = state.status === "enabled";
   const hasLabel = detail.label !== null;
+  // 管理外のジョブは有効/無効の切り替えも今すぐ実行もさせない
+  const canOperate = detail.managed;
+  const managedOnlyHint = canOperate ? undefined : "本アプリで管理していないジョブでは使えません";
   return (
     <section aria-label="ジョブの詳細">
       <h1 className="detail-pane__title">
@@ -69,12 +72,19 @@ export function JobDetail({ detail, busy, onToggleEnabled, onRunNow, onEdit, onD
             <button
               type="button"
               className="btn btn--secondary"
-              disabled={busy}
+              disabled={busy || !canOperate}
+              title={managedOnlyHint}
               onClick={() => onToggleEnabled(!enabled)}
             >
               {enabled ? "無効にする" : "有効にする"}
             </button>
-            <button type="button" className="btn btn--secondary" disabled={busy} onClick={onRunNow}>
+            <button
+              type="button"
+              className="btn btn--secondary"
+              disabled={busy || !canOperate}
+              title={managedOnlyHint}
+              onClick={onRunNow}
+            >
               今すぐ実行
             </button>
           </>
